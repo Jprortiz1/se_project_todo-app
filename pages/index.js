@@ -44,8 +44,8 @@ addTodoCloseBtn.addEventListener("click", () => {
 addTodoForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
 
-  const name = evt.target.name.value;
-  const dateInput = evt.target.date.value;
+  const name = addTodoForm.elements["name"].value;
+  const dateInput = addTodoForm.elements["date"].value;
 
   // Ajuste de la fecha por zona horaria
   const date = new Date(dateInput);

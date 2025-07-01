@@ -3,16 +3,15 @@ export default class Todo {
     this._name = data.name;
     this._id = data.id;
     this._completed = data.completed;
-    this._due = data.due || null;
+    this._due = data.date || null; // corregido también
     this._templateSelector = templateSelector;
   }
 
   _getTemplate() {
-    const template = document
+    return document
       .querySelector(this._templateSelector)
       .content.querySelector(".todo")
       .cloneNode(true);
-    return template;
   }
 
   _setEventListeners() {
@@ -27,22 +26,33 @@ export default class Todo {
 
   getView() {
     this._element = this._getTemplate();
-    this._checkbox = this._element.querySelector(".todo__checkbox");
-    this._checkboxLabel = this._element.querySelector(".todo__label");
-    this._deleteBtn = this._element.querySelector(".todo__delete");
 
-    this._checkbox.id = `checkbox-${this._id}`;
-    this._checkbox.checked = this._completed;
+    // Referencias correctas
+    this._checkbox = this._element.querySelector(".todo__completed");
+    this._checkboxLabel = this._element.querySelector(".todo__label");
+    this._deleteBtn = this._element.querySelector(".todo__delete-btn");
+    const nameEl = this._element.querySelector(".todo__name");
+    const dateEl = this._element.querySelector(".todo__date");
+
+    // ID y nombre
+    this._checkbox.id = `todo-${this._id}`;
     this._checkboxLabel.setAttribute("for", this._checkbox.id);
-    this._checkboxLabel.textContent = this._name;
+    nameEl.textContent = this._name;
+    this._checkbox.checked = this._completed;
 
     if (this._completed) {
       this._checkboxLabel.classList.add("todo__label_checked");
     }
 
     if (this._due) {
-      const dateEl = this._element.querySelector(".todo__date");
-      dateEl.textContent = this._due;
+      const dueDate = new Date(this._due);
+      if (!isNaN(dueDate)) {
+        dateEl.textContent = `Due: ${dueDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        })}`;
+      }
     }
 
     this._setEventListeners();
