@@ -6,7 +6,7 @@ import FormValidator from "../components/FormValidator.js";
 // Elementos del DOM
 const addTodoButton = document.querySelector(".button_action_add");
 const addTodoPopup = document.querySelector("#add-todo-popup");
-const addTodoForm = addTodoPopup.querySelector(".popup__form");
+const addTodoForm = document.forms["add-todo-form"];
 const addTodoCloseBtn = addTodoPopup.querySelector(".popup__close");
 const todosList = document.querySelector(".todos__list");
 
@@ -24,6 +24,16 @@ const closeModal = (modal) => {
 const generateTodo = (data) => {
   const todo = new Todo(data, "#todo-template");
   return todo.getView();
+};
+
+// Renderizar un ToDo y añadirlo a la lista (al inicio o al final)
+const renderTodo = (item, prepend = false) => {
+  const todo = generateTodo(item);
+  if (prepend) {
+    todosList.prepend(todo);
+  } else {
+    todosList.append(todo);
+  }
 };
 
 // Instancia de la clase FormValidator y activación de la validación
@@ -55,19 +65,15 @@ addTodoForm.addEventListener("submit", (evt) => {
     name,
     date,
     completed: false,
-    id: uuidv4(), // ID único para nuevos to-dos
+    id: uuidv4(),
   };
 
-  const todoElement = generateTodo(newTodo);
-  todosList.prepend(todoElement);
-
+  renderTodo(newTodo, true); // Añadir al inicio
   closeModal(addTodoPopup);
-  addTodoForm.reset(); // Limpia campos
-  validator.resetValidation(); // Limpia errores y desactiva el botón
+  validator.resetValidation(); // Ya incluye limpiar el formulario
 });
 
 // Renderizar los to-dos iniciales al cargar la página
 initialTodos.forEach((item) => {
-  const todo = generateTodo(item);
-  todosList.append(todo);
+  renderTodo(item);
 });
