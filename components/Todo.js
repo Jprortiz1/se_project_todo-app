@@ -3,7 +3,7 @@ export default class Todo {
     this._name = data.name;
     this._id = data.id;
     this._completed = data.completed;
-    this._due = data.date || null; // corregido también
+    this._due = data.date || null;
     this._templateSelector = templateSelector;
   }
 

@@ -60,7 +60,7 @@ export default class FormValidator {
 
   enableValidation() {
     this._setEventListeners();
-    this._toggleButtonState(); // asegura que empiece deshabilitado si es necesario
+    this._toggleButtonState();
   }
 
   resetValidation() {

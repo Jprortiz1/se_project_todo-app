@@ -24,6 +24,12 @@ export default class TodoCounter {
     this._updateText();
   }
 
+  render(total, completed) {
+    this._total = total;
+    this._completed = completed;
+    this._updateText();
+  }
+
   _updateText() {
     this._element.textContent = `Showing ${this._completed} out of ${this._total} completed`;
   }

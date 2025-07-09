@@ -57,12 +57,10 @@ addTodoButton.addEventListener("click", () => {
   addTodoPopup.open();
 });
 
-// Validación
 const formElement = document.forms["add-todo-form"];
 const formValidator = new FormValidator(validationConfig, formElement);
 formValidator.enableValidation();
 
-// Delegación de eventos
 document.addEventListener("change", (e) => {
   if (e.target.classList.contains("todo__completed")) {
     updateCounter();
@@ -74,13 +72,11 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Actualizar contador
+// Counter
 function updateCounter() {
   const total = document.querySelectorAll(".todo").length;
   const completed = document.querySelectorAll(
     ".todo__completed:checked"
   ).length;
-  todoCounter._total = total;
-  todoCounter._completed = completed;
-  todoCounter._updateText();
+  todoCounter.render(total, completed);
 }
