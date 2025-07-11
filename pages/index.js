@@ -9,27 +9,46 @@ import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 // DOM
 const addTodoButton = document.querySelector(".button_action_add");
 const counterSelector = ".counter__text";
+const formElement = document.forms["add-todo-form"];
+const formValidator = new FormValidator(validationConfig, formElement);
+formValidator.enableValidation();
 
 // Contador
 const todoCounter = new TodoCounter(initialTodos, counterSelector);
 
+// Funciones para mantener separación
+function handleCheck(completed) {
+  todoCounter.updateCompleted(completed);
+}
+
+function handleDelete(completed) {
+  if (completed) {
+    todoCounter.updateCompleted(false);
+  }
+  todoCounter.updateTotal(false);
+}
+
 // Crear tarea visual
 const createTodo = (data) => {
-  const todo = new Todo(data, "#todo-template");
+  const todo = new Todo(data, "#todo-template", handleCheck, handleDelete);
   return todo.getView();
+};
+
+// Función reutilizable para renderizar un todo
+const renderTodo = (item) => {
+  const todoElement = createTodo(item);
+  todoSection.addItem(todoElement);
 };
 
 // Sección de tareas
 const todoSection = new Section(
   {
     items: initialTodos,
-    renderer: (item) => {
-      const todoElement = createTodo(item);
-      todoSection.addItem(todoElement);
-    },
+    renderer: renderTodo,
   },
   ".todos__list"
 );
+
 todoSection.renderItems();
 
 // Popup
@@ -46,37 +65,15 @@ const addTodoPopup = new PopupWithForm("#add-todo-popup", (formData) => {
     id: uuidv4(),
   };
 
-  const todoElement = createTodo(newTodo);
-  todoSection.addItem(todoElement);
-  updateCounter();
+  renderTodo(newTodo);
+  todoCounter.updateTotal(true); // ✅ sumar nueva tarea
   addTodoPopup.close();
+  formElement.reset(); // ✅ limpia los campos solo tras envío exitoso
+  formValidator.resetValidation(); // ✅ desactiva botón, limpia errores
 });
+
 addTodoPopup.setEventListeners();
 
 addTodoButton.addEventListener("click", () => {
   addTodoPopup.open();
 });
-
-const formElement = document.forms["add-todo-form"];
-const formValidator = new FormValidator(validationConfig, formElement);
-formValidator.enableValidation();
-
-document.addEventListener("change", (e) => {
-  if (e.target.classList.contains("todo__completed")) {
-    updateCounter();
-  }
-});
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("todo__delete-btn")) {
-    setTimeout(updateCounter, 0);
-  }
-});
-
-// Counter
-function updateCounter() {
-  const total = document.querySelectorAll(".todo").length;
-  const completed = document.querySelectorAll(
-    ".todo__completed:checked"
-  ).length;
-  todoCounter.render(total, completed);
-}
