@@ -68,7 +68,6 @@ const addTodoPopup = new PopupWithForm("#add-todo-popup", (formData) => {
   renderTodo(newTodo);
   todoCounter.updateTotal(true); // ✅ sumar nueva tarea
   addTodoPopup.close();
-  formElement.reset(); // ✅ limpia los campos solo tras envío exitoso
   formValidator.resetValidation(); // ✅ desactiva botón, limpia errores
 });
 
